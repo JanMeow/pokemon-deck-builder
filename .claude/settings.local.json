@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create *)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(curl -s \"https://api.pokemontcg.io/v2/cards?q=name%3A%22charizard+ex%22&orderBy=-set.releaseDate&pageSize=3\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(uv run *)",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "WebFetch(domain:limitlesstcg.com)",
+      "Bash(uv sync *)"
+    ]
+  }
+}
