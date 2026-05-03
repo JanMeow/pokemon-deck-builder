@@ -6,8 +6,8 @@ FastAPI service that proxies and caches the [Pokemon TCG API](https://pokemontcg
 
 | Document | Description |
 |----------|-------------|
-| [Agent Architecture](app/agent/ARCHITECTURE.md) | LangGraph simulation agent — graph flow, state schema, information masking, player nodes, reviewer |
-| Backend Architecture | _TODO_ |
+| [Agent Architecture](app/docs/agent.md) | LangGraph simulation agent — graph flow, state schema, information masking, player nodes, reviewer |
+| [Backend Architecture](app/docs/ARCHITECTURE.md) | FastAPI routers, services, cache layer, config |
 
 ## Requirements
 
