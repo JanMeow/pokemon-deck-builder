@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Download, Loader, ChevronDown, ChevronUp, Upload } from 'lucide-react'
 import { getMetaDecks, getMetaDeckCards, importDeck, type MetaDeck } from '../api/client'
-import type { Deck, DeckCard } from '../types/pokemon'
+import type { DeckCard } from '../types/pokemon'
 
 interface Props {
   onDeckLoaded: (cards: DeckCard[], name: string) => void
