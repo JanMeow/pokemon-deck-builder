@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter
+from app.models.simulation import FeedbackAgentPayload, SimulateAgentPayload
 
 router = APIRouter(prefix="/agent", tags=["agent"])
-
 @router.post("/simulate")
 async def simulate_agent(payload: SimulateAgentPayload):
     return {"message": "Agent simulated"}
