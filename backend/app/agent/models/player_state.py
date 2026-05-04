@@ -1,7 +1,8 @@
-from typing import TypedDict, Dict, List
+from typing import Dict, List, Self
+from pydantic import BaseModel, Field
 
 # For player nodes
-class Card(TypedDict):
+class Card(BaseModel):
     name: str
     type: str
     weakness: str
@@ -9,29 +10,32 @@ class Card(TypedDict):
     maximum_hp: int
     abilities: List[Dict]
 
+    def to_field(self) -> "CardOnField":
+        return CardOnField(
+            **self.model_dump(),
+            current_hp=self.maximum_hp,
+            current_status="",
+            used_abilities=False,
+            attached_items=[],
+            attached_energy=[],
+        )
+
 class CardOnField(Card):
     current_hp: int
-    current_status: str
+    current_status: str 
     used_abilities: bool
     attached_items: List[Card]
     attached_energy: List[Card]
 
+    def to_field(self) -> Self:
+        return self
 
-class PlayerState(TypedDict):
+class PlayerState(BaseModel):
     hand: List[Card]
-    deck: List[Card]          # full deck list (they're aware of it)
+    deck: List[Card] = Field(default_factory=list, max_length=60)          # full deck list (they're aware of it)
     discard: List[Card]
     active_pokemon: CardOnField
-    bench: List[CardOnField]
-    prize_cards: list[Card]         # how many prizes remaining (not which cards)
+    bench: List[CardOnField] = Field(default_factory=list, max_length=5)
+    prize_cards: List[Card] = Field(default_factory=list, max_length=6)         # how many prizes remaining (not which cards)
     messages: List[str]           # isolated context window
 
-# For reviewer nodes
-class GameState(TypedDict):
-    player1: PlayerState
-    player2: PlayerState
-    stadium: Card #Share state
-    actions: Dict[str, List[Dict]]       # only the previous player's public action — visible to current player
-    turn_number: int
-    winner: str | None
-    turn_logs: List[Dict]    # accumulated reasoning from both players → fed to reviewer
