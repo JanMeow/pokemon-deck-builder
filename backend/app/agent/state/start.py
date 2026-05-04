@@ -9,7 +9,9 @@ def start_draw(player: PlayerState) -> None:
     draw(player, 5)
     idx =[random.choice(search(player, condition=lambda card: card.type == "Pokemon", target="deck"))]
     place(player, idx, source="deck", target="hand")
-
+def set_prize_cards(player: PlayerState) -> None:
+    player.prize_cards = player.deck[:6]
+    player.deck = player.deck[6:]
 def start(player_A: PlayerState, player_B: PlayerState) -> GameState:
     # Shuffle the decks
     shuffle(player_A, target="deck")
@@ -18,7 +20,6 @@ def start(player_A: PlayerState, player_B: PlayerState) -> GameState:
     start_draw(player_A)
     start_draw(player_B)
     # Put 6 cards to prize cards
-    player_A.prize_cards = player_A.deck[:6]
-    player_B.prize_cards = player_B.deck[:6]
-    player_A.deck = player_A.deck[6:]
-    player_B.deck = player_B.deck[6:]
+    set_prize_cards(player_A)
+    set_prize_cards(player_B)
+    return GameState(player_A=player_A, player_B=player_B, stadium=None, actions={}, turn_number=0, turn_logs=[])

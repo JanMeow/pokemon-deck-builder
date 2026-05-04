@@ -1,0 +1,61 @@
+# Full stack: Redis cache, FastAPI backend, static frontend + /api reverse proxy.
+# Usage (repo root):  docker compose up --build
+# UI: http://localhost     API (direct): http://localhost:8000     Redis: localhost:6379
+#
+# Optional keys: add to a `.env` file next to this compose file (repo root, gitignored):
+#   POKEMON_TCG_API_KEY=...
+#   ANTHROPIC_API_KEY=...
+# Compose substitutes them into the `api` service below.
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      REDIS_URL: redis://redis:6379
+      POKEMON_TCG_API_KEY: ${POKEMON_TCG_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import urllib.request; urllib.request.urlopen(\"http://127.0.0.1:8000/health\")"',
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  redis_data:
